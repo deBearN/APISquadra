@@ -1,6 +1,6 @@
 ﻿namespace APISquadra.Models
 {
-    public class Usuarios
+    public class Usuario
     {
         public Guid userId { get; set; }
         public string userName { get; set; }

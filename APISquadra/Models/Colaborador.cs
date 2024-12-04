@@ -1,14 +1,15 @@
 ﻿namespace APISquadra.Models
 {
-    public class Colaborador: Usuarios
+    public class Colaborador: Usuario
     {
         public decimal colabSalario {  get; set; }
         public string colabCpf { get; set; }
-        public enum ColaboradorPerms
+        public enum Cargo
         {
             Funcionario = 1,
-            Administrador = 2
+            Estoquista = 2,
+            Gerente = 3
         }
-        public ColaboradorPerms colabPerms { get; set; } = ColaboradorPerms.Funcionario;
+        public Cargo colabCargo { get; set; } = Cargo.Funcionario;
     }
 }
