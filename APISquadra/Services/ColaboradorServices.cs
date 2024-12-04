@@ -27,7 +27,7 @@ namespace APISquadra.Services
             return returnAllColaboradores();
         }
             //Deletar dados DELETE
-        public void removeColaborador(Guid id) //COLAB
+        public void removeColaborador(Guid id)
         {
             var _colaborador = ListaColaboradores.FirstOrDefault(x => x.userId == id);
 
@@ -37,7 +37,7 @@ namespace APISquadra.Services
             ListaColaboradores.Remove(_colaborador);
         }
         //Update dados PUT
-        public void updateColaborador(Guid id, string username, string password, string useremail, string userphone, string cpf, decimal salario, Colaborador.Cargo Cargo) //COLAB
+        public void updateColaborador(Guid id, string username, string password, string useremail, string userphone, string cpf, decimal salario, Colaborador.Cargo Cargo)
         {
             var _colaborador = ListaColaboradores.FirstOrDefault(x => x.userId == id);
             _colaborador.userName = username;

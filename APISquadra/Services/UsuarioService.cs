@@ -6,10 +6,10 @@ namespace APISquadra.Services
     {
         private static List<Usuario> ListaUsuario { get; set; } = new List<Usuario>();
         //Retornar dados GET
-        public List<Usuario> returnAllUsuarios() //USER
+        public List<Usuario> returnAllUsuarios()
         { return ListaUsuario; }
         //RegistrarDados POST
-        public List<Usuario> registerUsuarios(string username, string password, string useremail, string userphone) // USER
+        public List<Usuario> registerUsuarios(string username, string password, string useremail, string userphone)
         {
             Usuario _usuario = new Usuario();
             {
@@ -24,7 +24,7 @@ namespace APISquadra.Services
             return returnAllUsuarios();
         }
         //Deletar dados DELETE
-        public void removeUser(Guid id) //USER
+        public void removeUser(Guid id)
         {
             var _usuario = ListaUsuario.FirstOrDefault(x => x.userId == id);
 
@@ -34,7 +34,7 @@ namespace APISquadra.Services
             ListaUsuario.Remove(_usuario);
         }
         //Update dados PUT
-        public void updateUsuario(Guid id, string username, string password, string useremail, string userphone) //USER
+        public void updateUsuario(Guid id, string username, string password, string useremail, string userphone)
         {
             var _usuario = ListaUsuario.FirstOrDefault(x => x.userId == id);
             _usuario.userName = username;
