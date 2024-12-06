@@ -1,10 +1,20 @@
-﻿using APISquadra.Models;
+﻿using APISquadra.Data;
+using APISquadra.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace APISquadra.Services
 {
     public class ProdutoService
     {
-        public bool ValidarEstoque(int produtoAmount)
+
+        private readonly AppDbContext _context;
+
+        public ProdutoService(AppDbContext context)
+        {
+            _context = context;
+        }
+        public static bool ValidarEstoque(int produtoAmount)
         {
             bool validado = false;
             if (produtoAmount > 0)
@@ -13,51 +23,6 @@ namespace APISquadra.Services
                 return validado;
             }
             return validado;
-        }
-
-        public static List<Produto> listaProdutos {  get; set; } = new List<Produto>();
-
-        //GET
-        public List<Produto> ReturnAllProdutos()
-        { 
-            return listaProdutos; 
-        }
-        // POST
-        public List<Produto> RegisterProduto(string name, string description, decimal value, int amount) 
-        { 
-            Produto _produto = new Produto();
-            {
-                _produto.ProdutoID = new Guid(Guid.NewGuid().ToString());
-                _produto.ProdutoName = name;
-                _produto.ProdutoDescription = description;
-                _produto.ProdutoAmount = amount;
-                _produto.ProdutoAvailability = ValidarEstoque(_produto.ProdutoAmount);
-                _produto.ProdutoValue = value;
-                
-            }
-            listaProdutos.Add( _produto );
-            return ReturnAllProdutos();
-        }
-        public void removeProduto(Guid id)
-        {
-            var _produto = listaProdutos.FirstOrDefault(x => x.ProdutoID == id);
-
-            if (_produto == null)
-                return;
-
-            listaProdutos.Remove(_produto);
-        }
-        public void updateProduto(Guid id, string name, string description, decimal value, int amount)
-        {
-            var _produto = listaProdutos.FirstOrDefault(x => x.ProdutoID == id);
-            _produto.ProdutoName = name;
-            _produto.ProdutoDescription = description;
-            _produto.ProdutoAmount = amount;
-            _produto.ProdutoAvailability = ValidarEstoque(_produto.ProdutoAmount);
-            _produto.ProdutoValue = value;
-
-            listaProdutos.Remove(_produto);
-            listaProdutos.Add(_produto );
         }
     }
 }

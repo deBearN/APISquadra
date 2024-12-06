@@ -1,46 +1,102 @@
-﻿using APISquadra.Models;
-using APISquadra.Models.Requests;
+﻿using APISquadra.Data;
+using APISquadra.DTO;
+using APISquadra.Models;
 using APISquadra.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProjetoSquadra.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UsuarioController
+    public class UsuarioController : ControllerBase
     {
-        private readonly UsuarioService usuariosService = new UsuarioService();
+        private readonly AppDbContext _context;
+
+        public UsuarioController(AppDbContext context)
+        {
+            _context = context;
+        }
 
         [HttpGet]
-        public List<Usuario> returnUsuarios()
+        [Authorize(Roles = "Gerente")]
+        public ActionResult<List<Usuario>> GetUsuarios()
         {
-            var _usuarios = usuariosService.returnAllUsuarios();
-            
-            return _usuarios;
+            return Ok(_context.Usuario.ToList());
         }
-        
+
+        [HttpGet("{id?}")]
+        [Authorize(Roles = "Gerente")]
+        //Authenticar para Estoquista/Admin/Funcionario
+        public ActionResult<Usuario> GetUsuario([FromRoute] Guid id)
+        {
+            var usuario = _context.Usuario.Find(id);
+
+            if (usuario == null) return NotFound();
+
+            return Ok(usuario);
+        }
+
         [HttpPost]
-        public List<Usuario> RegistrarUsuario([FromBody] userRequest request)
+        [Authorize(Roles = "Gerente")]
+        public ActionResult<Usuario> CreateUsuario([FromBody] userRequest request)
         {
-            var usuariosCadastrados = usuariosService.registerUsuarios(request.userName, request.userPassword, request.userEmail, request.userPhone);
+            var usuario = new Usuario()
+            {
+                userId = Guid.NewGuid(),
+                userName = request.userName,
+                userEmail = request.userEmail,
+                userPassword = request.userPassword,
+                userPhone = request.userPhone,
+                userCargo = request.userCargo,
+                userCpf = request.userCpf,
+                userSalario = request.userSalario
+            };
 
-            return usuariosCadastrados;
-        }
-
-        [HttpDelete("{id}")]
-        public List<Usuario> Delete([FromRoute] Guid id)
-        {
-            usuariosService.removeUser(id);
-
-            return usuariosService.returnAllUsuarios();
+            _context.Usuario.Add(usuario);
+            _context.SaveChanges();
+            return Ok(usuario);
         }
 
         [HttpPut("{id}")]
-        public List<Usuario> Atualizar(userRequest request, [FromRoute] Guid id)
+        [Authorize(Roles = "Gerente")]
+        public ActionResult<Usuario> UpdateUsuario(
+            [FromRoute] Guid id, 
+            [FromBody] userRequest request)
         {
-            usuariosService.updateUsuario(id, request.userName, request.userPassword, request.userEmail, request.userPhone);
+            if (id == Guid.Empty) return BadRequest();
+            var usuario = new Usuario()
+            {
+                userId = id,
+                userName = request.userName,
+                userEmail = request.userEmail,
+                userPassword = request.userPassword,
+                userPhone = request.userPhone,
+                userCargo = request.userCargo,
+                userCpf = request.userCpf,
+                userSalario = request.userSalario
+            };
 
-            return usuariosService.returnAllUsuarios();
+            _context.Entry(usuario).State = EntityState.Modified;
+            _context.SaveChanges();
+
+            return Ok(usuario);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Gerente")]
+        public IActionResult DeletarUsuario([FromRoute] Guid id)
+        {
+            if (id == Guid.Empty) return BadRequest();
+
+            var usuario = _context.Usuario.Find(id);
+            if (usuario == null) return NotFound();
+
+            _context.Usuario.Remove(usuario);
+            _context.SaveChanges();
+
+            return NoContent();
         }
     }
 }
