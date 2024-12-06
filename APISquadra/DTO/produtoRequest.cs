@@ -1,4 +1,4 @@
-﻿namespace APISquadra.Models.Requests
+﻿namespace APISquadra.DTO
 {
     public class produtoRequest
     {

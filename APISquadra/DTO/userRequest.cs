@@ -1,8 +1,7 @@
-﻿namespace APISquadra.Models
+﻿namespace APISquadra.DTO
 {
-    public class Usuario
+    public class userRequest
     {
-        public Guid userId { get; set; }
         public string userName { get; set; } = string.Empty;
         public string userEmail { get; set; } = string.Empty;
         public string userPassword { get; set; } = string.Empty;
