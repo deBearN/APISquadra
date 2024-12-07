@@ -22,6 +22,14 @@ namespace APISquadra.Data
 
         }
 
+        public bool CheckIDCat(int id)
+        {
+            var productExists = _context.Categoria.Any(x => x.idCategoria == id);
+
+            return productExists;
+
+        }
+
         private ErrorCheck CheckProduto(produtoRequest request, Produto produto)
         {
             ErrorCheck errorCheck = new ErrorCheck();
@@ -65,6 +73,13 @@ namespace APISquadra.Data
             {
                 errorCheck.IsError = true;
                 errorCheck.Message = "Something went wrong!";
+
+                return errorCheck;
+            }; //MAY BE REMOVED
+            if (CheckIDCat(produto.idCategoria) == false) // Nao faz sentido existir, mas VAI QUE!
+            {
+                errorCheck.IsError = true;
+                errorCheck.Message = "This category ID doesn't exist!";
 
                 return errorCheck;
             }; //MAY BE REMOVED

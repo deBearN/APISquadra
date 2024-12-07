@@ -2,6 +2,7 @@
 using APISquadra.Models;
 using APISquadra.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace APISquadra.Data
 {
@@ -17,7 +18,9 @@ namespace APISquadra.Data
         //GET
         private Produto PegarProduto(Guid? id)
         {
-            var produto = _context.Produto.Find(id);
+            var produto = _context.Produto
+        .Include(p => p.Categoria)
+        .FirstOrDefault(p => p.ProdutoID == id);
 
             return produto;
         }
@@ -31,16 +34,17 @@ namespace APISquadra.Data
         //POST
         private Produto criarProduto(produtoRequest request) // Fazer check se funcionou retorna true se nao false ai na controller ficaria se true Ok se nao BadRequest
         {
-            Categoria categoria = new Categoria();
+            var categoria = _context.Categoria.FirstOrDefault(c => c.idCategoria == request.idCategoria);
 
             var produto = new Produto()
             {
-                ProdutoID = Guid.NewGuid(), 
+                ProdutoID = Guid.NewGuid(),
                 ProdutoName = request.ProdutoName,
                 ProdutoDescription = request.ProdutoDescription,
                 ProdutoValue = request.ProdutoValue,
                 ProdutoAmount = request.ProdutoAmount,
                 idCategoria = request.idCategoria,
+                Categoria = categoria,
                 ProdutoAvailability = ProdutoService.ValidarEstoque(request.ProdutoAmount)
 
             };
@@ -58,6 +62,7 @@ namespace APISquadra.Data
 
         private Produto updateProdutoF(Guid id, produtoRequest request)
         {
+            var categoria = _context.Categoria.FirstOrDefault(c => c.idCategoria == request.idCategoria);
             return new Produto()
             {
                 ProdutoID = id,
@@ -66,6 +71,7 @@ namespace APISquadra.Data
                 ProdutoValue = request.ProdutoValue,
                 ProdutoAmount = request.ProdutoAmount,
                 idCategoria = request.idCategoria,
+                Categoria = categoria,
                 ProdutoAvailability = ProdutoService.ValidarEstoque(request.ProdutoAmount)
             };
         }

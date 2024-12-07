@@ -47,7 +47,7 @@ namespace APISquadra.Controllers
 
             if (produto == null) return NotFound();
 
-            return Ok(produto);
+            return produto;
         }
         [HttpPost]
         [Authorize(Roles = "Gerente, Estoquista")]
@@ -70,9 +70,6 @@ namespace APISquadra.Controllers
 
         }
 
-
-
-
         [HttpPut("{id}")]
         [Authorize(Roles = "Gerente, Estoquista")]
         public ActionResult<Produto> UpdateProduto(
@@ -84,9 +81,13 @@ namespace APISquadra.Controllers
             ProdutosDB produtosDB = new ProdutosDB(_context);
             var resultado = dbChecks.CheckID(id);
 
+
             if (resultado == true) {
+                
                 var produto = produtosDB.returnProdutoF(id, request);
+                ErrorCheck Check = (ErrorCheck)dbChecks.returnCheck(request, produto);
                 if (produto == null) return BadRequest("The product returned null! somehow...");
+                if (Check.IsError == true) return BadRequest(Check.Message);
                 _context.Entry(produto).State = EntityState.Modified;
                 _context.SaveChanges();
                 return Ok(produto);

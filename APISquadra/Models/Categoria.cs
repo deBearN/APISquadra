@@ -7,7 +7,7 @@ namespace APISquadra.Models
         public int idCategoria { get; set; }
         public string nomeCategoria { get; set; } = string.Empty;
 
-        [JsonIgnore]
+        [JsonIgnore] // Para acabar com loop de serializacao
         public ICollection<Produto> Produtos { get; set; }
     }
 }
