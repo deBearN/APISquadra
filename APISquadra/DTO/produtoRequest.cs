@@ -6,5 +6,6 @@
         public string ProdutoDescription { get; set; } = string.Empty;
         public decimal ProdutoValue { get; set; }
         public int ProdutoAmount { get; set; }
+        public int idCategoria { get; set; }
     }
 }

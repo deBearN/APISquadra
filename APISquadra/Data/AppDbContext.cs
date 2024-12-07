@@ -13,6 +13,8 @@ namespace APISquadra.Data
 
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<Produto> Produto { get; set; }
+
+        public DbSet<Categoria> Categoria { get; set; }
     
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,6 +24,13 @@ namespace APISquadra.Data
                 .HasKey(x => x.userId);
             modelBuilder.Entity<Produto>()
                 .HasKey(x => x.ProdutoID);
+            modelBuilder.Entity<Categoria>()
+                .HasKey(x => x.idCategoria);
+            modelBuilder.Entity<Produto>()
+               .HasOne(p => p.Categoria) // Produto has one Categoria
+               .WithMany(c => c.Produtos) // Categoria has many Produtos
+               .HasForeignKey(p => p.idCategoria); // Foreign key in Produto
+
         }
     }
 }

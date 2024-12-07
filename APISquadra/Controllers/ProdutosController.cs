@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace APISquadra.Controllers
 {
@@ -21,25 +22,27 @@ namespace APISquadra.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Gerente, Estoquista, Funcionario")]
         public ActionResult<List<Produto>> GetProdutos()
         {
-            return Ok(_context.Produto.ToList());
+            return Ok(_context.Produto
+        .Include(p => p.Categoria)
+        .ToList());
         }
 
         [HttpGet("Estoque")]
-        [Authorize(Roles = "Gerente, Estoquista, Funcionario")]
         public ActionResult<Produto> GetProdutosEmEstoque()
         {
 
-            return Ok(_context.Produto.ToList().Where(p => p.ProdutoAvailability == true));
+            return Ok(_context.Produto
+        .Include(p => p.Categoria)
+        .ToList()
+        .Where(p => p.ProdutoAvailability == true));
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Gerente, Estoquista, Funcionario")]
-        public ActionResult<Produto> GetProduto([FromRoute] Guid id)
+        public ActionResult<Produto> GetProduto([FromRoute][Required] Guid id)
         {
-            Dados _dados = new Dados(_context);
+            ProdutosDB _dados = new ProdutosDB(_context);
             var produto = _dados.RetornarProduto(id);
 
             if (produto == null) return NotFound();
@@ -51,50 +54,51 @@ namespace APISquadra.Controllers
         //TODO Authenticar para Estoquista/Admin
         public ActionResult<Produto> CreateProduto([FromBody] produtoRequest request)
         {
-            var produto = new Produto()
+            ProdutosDB _dados = new ProdutosDB(_context);
+            DBChecks dBChecks = new DBChecks(_context);
+            Produto produto = _dados.returnCreateProduto(request);
+            //Checks
+            ErrorCheck Check = (ErrorCheck)dBChecks.returnCheck(request, produto);
+            if (Check.IsError == true)
             {
-                ProdutoID = Guid.NewGuid(),
-                ProdutoName = request.ProdutoName,
-                ProdutoDescription = request.ProdutoDescription,
-                ProdutoValue = request.ProdutoValue,
-                ProdutoAmount = request.ProdutoAmount,
-                ProdutoAvailability = ProdutoService.ValidarEstoque(request.ProdutoAmount)
-
-            };
-
+                return BadRequest(Check.Message);
+            }
+            //
             _context.Produto.Add(produto);
             _context.SaveChanges();
             return Ok(produto);
+
         }
+
+
+
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Gerente, Estoquista")]
         public ActionResult<Produto> UpdateProduto(
-            [FromRoute] Guid id,
+            [FromRoute][Required] Guid id,
             [FromBody] produtoRequest request)
         {
-            if (id == Guid.Empty) return BadRequest();
-            var produto = new Produto()
-            {
-                ProdutoID = id,
-                ProdutoName = request.ProdutoName,
-                ProdutoDescription = request.ProdutoDescription,
-                ProdutoValue = request.ProdutoValue,
-                ProdutoAmount = request.ProdutoAmount,
-                ProdutoAvailability = ProdutoService.ValidarEstoque(request.ProdutoAmount)
-            };
 
-            _context.Entry(produto).State = EntityState.Modified;
-            _context.SaveChanges();
+            DBChecks dbChecks = new DBChecks(_context);
+            ProdutosDB produtosDB = new ProdutosDB(_context);
+            var resultado = dbChecks.CheckID(id);
 
-            return Ok(produto);
+            if (resultado == true) {
+                var produto = produtosDB.returnProdutoF(id, request);
+                if (produto == null) return BadRequest("The product returned null! somehow...");
+                _context.Entry(produto).State = EntityState.Modified;
+                _context.SaveChanges();
+                return Ok(produto);
+            }
+            else return BadRequest("The requested ID doesn't exist in our Database");
         }
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Gerente")]
-        public IActionResult DeletarProduto([FromRoute] Guid id)
+        public IActionResult DeletarProduto([FromRoute][Required] Guid id)
         {
-            if (id == Guid.Empty) return BadRequest();
+            if (id == Guid.Empty) return BadRequest("Empty or Null ID");
 
             var produto = _context.Produto.Find(id);
             if (produto == null) return NotFound();

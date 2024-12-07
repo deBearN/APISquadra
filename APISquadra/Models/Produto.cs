@@ -1,4 +1,5 @@
 ﻿using APISquadra.Services;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace APISquadra.Models
 {
@@ -10,5 +11,9 @@ namespace APISquadra.Models
         public bool ProdutoAvailability { get; set; }
         public decimal ProdutoValue { get; set; }
         public int ProdutoAmount { get; set; }
+        public int idCategoria { get; set; }
+
+        [NotMapped]
+        public Categoria Categoria   { get; set; }
     }
 }
