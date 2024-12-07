@@ -149,5 +149,6 @@ Os endpoints da aba **Usuários** possuem a mesma estrutura que os da aba **Prod
 1. **Autenticação**: Sempre autentique o token antes de acessar rotas protegidas.
 2. **Testes no Swagger**: Utilize a interface gráfica do Swagger para executar os endpoints e visualizar as respostas.
 3. **Formato do token**: Certifique-se de usar o prefixo `Bearer` ao informar o token no campo de autorização.
+4. **Banco de dados**: Certifique-se que o [path do banco de dados local](https://github.com/deBearN/APISquadra/blob/c02e1f2a4d2441f076556eba7291e56f25cdd681/APISquadra/Program.cs#L60) está correto, e que você conectou o banco de dados Local ao .mdf.
 
 
