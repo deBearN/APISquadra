@@ -9,7 +9,12 @@
 #### 1.1. Log-in  
 - **Descrição**: Realiza o login e retorna um token para autenticação.  
 - **Método HTTP**: `POST`  
-- **Entrada**: Credenciais de usuário (ex.: `userName` e `password`).  
+- **Entrada**: Credenciais de usuário:
+  ```json
+  {
+    "userName": "Francisco",
+    "password": "123456"
+  }
 - **Saída**: Um token no formato JWT.  
 
 #### 1.2. Autorizar Token  
@@ -92,18 +97,18 @@ Os endpoints da aba **Usuários** possuem a mesma estrutura que os da aba **Prod
 #### 3.1. Listar todos os usuários  
 - **Descrição**: Retorna todos os usuários cadastrados.  
 - **Método HTTP**: `GET`  
-- **Rota**: `/usuarios`
+- **Rota**: `/api/usuarios`
 
 #### 3.2. Buscar usuário por ID  
 - **Descrição**: Retorna os dados de um usuário específico com base no ID informado.  
 - **Método HTTP**: `GET`  
-- **Rota**: `/usuarios/{id}`  
+- **Rota**: `/api/usuarios/{id}`  
 - **Parâmetro**: `id` (identificador único do usuário).
 
 #### 3.3. Registrar um novo usuário  
 - **Descrição**: Permite cadastrar um novo usuário.  
 - **Método HTTP**: `POST`  
-- **Rota**: `/usuarios`  
+- **Rota**: `/api/usuarios`  
 - **Entrada**: Objeto JSON com as informações do usuário:  
   ```json
   {
@@ -120,7 +125,7 @@ Os endpoints da aba **Usuários** possuem a mesma estrutura que os da aba **Prod
 #### 3.4. Editar um usuário existente  
 - **Descrição**: Atualiza os dados de um usuário já cadastrado.  
 - **Método HTTP**: `PUT`  
-- **Rota**: `/usuarios/{id}`  
+- **Rota**: `/api/usuarios/{id}`  
 - **Parâmetro**: `id` (identificador único do usuário).  
 - **Entrada**: Objeto JSON com os novos dados do usuário:  
   ```json
@@ -138,7 +143,7 @@ Os endpoints da aba **Usuários** possuem a mesma estrutura que os da aba **Prod
 #### 3.5. Remover um usuário  
 - **Descrição**: Exclui um usuário específico da base de dados.  
 - **Método HTTP**: `DELETE`  
-- **Rota**: `/usuarios/{id}`  
+- **Rota**: `/api/usuarios/{id}`  
 - **Parâmetro**:  
   - `id` (identificador único do usuário).
 
