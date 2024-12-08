@@ -42,12 +42,17 @@ namespace APISquadra.Controllers
         [HttpGet("{id}")]
         public ActionResult<Produto> GetProduto([FromRoute][Required] Guid id)
         {
+            DBChecks dbChecks = new DBChecks(_context);
             ProdutosDB _dados = new ProdutosDB(_context);
+            var resultado = dbChecks.CheckID(id);
+            if(resultado == true) { 
             var produto = _dados.RetornarProduto(id);
-
             if (produto == null) return NotFound();
 
-            return produto;
+                return produto;
+            }
+            else return BadRequest("The requested ID doesn't exist in our Database");
+
         }
         [HttpPost]
         [Authorize(Roles = "Gerente, Estoquista")]
